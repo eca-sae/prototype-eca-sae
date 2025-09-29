@@ -1,0 +1,32 @@
+version: "3.9"
+
+name: zerosign-shared
+
+volumes:
+  # This volume is used by the mock_s3 service
+  zsn_s3_bucket:
+    external: true
+
+networks:
+  # Defines the network that will be shared with the app containers
+  pocnet:
+    name: ${ZSN_NET_NAME:-zs-pocnet}
+    external: true
+
+services:
+  mock_s3:
+    init: true
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.mock_s3
+    image: zerosign/mock-s3:bookworm
+    container_name: mock-s3-sae-endpoint
+    networks:
+      - pocnet
+    volumes:
+      - ..:/app:ro
+      - zsn_s3_bucket:/S3:rw
+    working_dir: /S3
+    entrypoint: /app/containers/entrypoint-mock_s3.sh
+    restart: "on-failure"
+    

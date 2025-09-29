@@ -1,0 +1,63 @@
+{
+  "required": [
+    "verifier",
+    "mode",
+    "polling",
+    "eca_uuid",
+    "paths",
+    "profile",
+    "vf",
+    "attester",
+    "ihb"
+  ],
+  "attester": {
+    "required": [
+        "iss",
+        "sub",
+        "lifetime_sec"
+    ]
+  },
+  "verifier": {
+    "required": [
+        "ephemeral_keys_only",
+        "fingerprint"
+    ]
+  },
+  "mode_enum": [
+    "deterministic",
+    "randomized"
+  ],
+  "ihb.pattern_enum": [
+    "pattern_a",
+    "pattern_b"
+  ],
+  "polling.verifier_fields": [
+    "initial_delay_sec",
+    "max_delay_sec",
+    "total_timeout_sec",
+    "jitter"
+  ],
+  "paths.required": [
+    "attester_from_verifier.publish_dir",
+    "attester_from_verifier.attester_poll_url",
+    "attester_to_verifier.publish_dir",
+    "attester_to_verifier.verifier_poll_url"
+  ],
+  "profile_enum": [
+    "MTI"
+  ],
+  "vf": {
+    "required": [
+      "delivery",
+      "encryption",
+      "plaintext_len_bytes",
+      "channel_path"
+    ],
+    "delivery_enum": [
+      "independent_channel"
+    ],
+    "encryption_enum": [
+      "HPKE_RFC9180"
+    ]
+  }
+}

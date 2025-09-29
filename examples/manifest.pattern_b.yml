@@ -1,0 +1,40 @@
+# MTI happy-path manifest (Pattern B), rendered by orchestrate.sh via envsubst.
+mode: ${ZSN_MODE}                # deterministic | randomized
+eca_uuid: ${ECA_UUID}
+role: Verifier
+profile: MTI
+
+ihb:
+  pattern: pattern_b            # SHA-512(BF_raw || IF_raw)
+
+paths:
+  attester_from_verifier:
+    publish_dir:       "/S3/zerosign-bucket/${ECA_UUID}"
+    attester_poll_url: "https://mock-s3-sae-endpoint/zerosign-bucket/${ECA_UUID}/"
+
+  attester_to_verifier:
+    publish_dir:       "/root/.wellknown/${ECA_UUID}"
+    verifier_poll_url: "https://attester-${ECA_UUID_SHORT}:8443/${ECA_UUID}/"
+
+polling:
+  verifier: { initial_delay_sec: 1, max_delay_sec: 3, total_timeout_sec: 60, jitter: true }
+  attester: { initial_delay_sec: 1, max_delay_sec: 3, total_timeout_sec: 20, jitter: true }
+
+trust:
+  orchestrator_trusts_verifier_per_job: true
+
+attester:
+  iss: "zerosign-demo"
+  sub: "attester-vm"
+  lifetime_sec: 300
+
+verifier:
+  ephemeral_keys_only: true
+  fingerprint: ${VERIFIER_FINGERPRINT} # OpenSSH SHA256 fingerprint (vfp) of the Verifier's public signing key.
+
+vf:
+  delivery: independent_channel
+  encryption: HPKE_RFC9180
+  plaintext_len_bytes: 32 # Recommended length for VF is >= 128 bits
+  channel_path: /vf-channel/${ECA_UUID}
+

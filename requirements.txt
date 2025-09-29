@@ -1,0 +1,6 @@
+cryptography==43.0.1
+cbor2==5.6.4
+pycose==1.1.0
+PyYAML==6.0.2
+pyhpke==0.6.2
+requests==2.31.0

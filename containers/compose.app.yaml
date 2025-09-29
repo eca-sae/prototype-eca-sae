@@ -1,0 +1,71 @@
+version: "3.9"
+
+volumes:
+  zsn_attester_secrets:
+    external: true
+  zsn_verifier_secrets:
+    external: true
+  zsn_attestation_results:
+    external: true
+  zsn_vf_channel:
+    external: true
+  zsn_s3_bucket:
+    external: true
+
+networks:
+  pocnet:
+    name: ${ZS_NET_NAME:-zs-pocnet}
+    external: true
+
+services:
+  attester:
+    init: true
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.attester
+    image: zerosign/attester:bookworm
+    container_name: attester-${ECA_UUID_SHORT}
+    networks:
+      pocnet:
+        aliases:
+          - attester-${ECA_UUID_SHORT}
+    environment:
+      ECA_UUID: "${ECA_UUID}"
+      IF_B64URL: "${IF_B64URL}"
+      VERIFIER_PUB_B64URL: "${VERIFIER_PUB_B64URL}"
+      VERIFIER_FINGERPRINT: "${VERIFIER_FINGERPRINT}"
+      PYTHONPATH: /app
+    working_dir: /app
+    volumes:
+      - ..:/app:ro
+      - ${RUN_MANIFEST_PATH}:/run/manifest.yml:ro
+      - ${AUTHORIZED_KEYS_PATH}:/root/.ssh/authorized_keys:ro
+      - zsn_attester_secrets:/secrets:rw
+      - zsn_vf_channel:/vf-channel:ro
+    entrypoint: /app/containers/entrypoint-attester.sh
+    restart: "no"
+
+  verifier:
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile.verifier
+    image: zerosign/verifier:bookworm
+    container_name: verifier-${ECA_UUID_SHORT}
+    networks:
+      - pocnet
+    depends_on:
+      - attester
+    environment:
+      ECA_UUID: "${ECA_UUID}"
+      VNONCE_B64URL: "${VNONCE_B64URL}"
+      PYTHONPATH: /app
+    working_dir: /app
+    volumes:
+      - ..:/app:ro
+      - ${RUN_MANIFEST_PATH}:/run/manifest.yml:ro
+      - zsn_verifier_secrets:/secrets:ro
+      - zsn_attestation_results:/results:rw
+      - zsn_vf_channel:/vf-channel:rw
+      - zsn_s3_bucket:/S3:rw
+    entrypoint: /app/containers/entrypoint-verifier.sh
+    restart: "no"

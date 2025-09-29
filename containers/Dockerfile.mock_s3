@@ -1,0 +1,16 @@
+FROM debian:bookworm-slim
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 python3-pip ca-certificates openssl bash busybox \
+    && rm -rf /var/lib/apt/lists/*
+RUN python3 --version | grep '^Python 3.11.'
+
+WORKDIR /app
+COPY run_https_static.sh /app/run_https_static.sh
+RUN chmod +x /app/run_https_static.sh
+
+VOLUME ["/S3"]
+EXPOSE 443/tcp
+
+ENTRYPOINT ["bash","-lc"]
+CMD ["/app/run_https_static.sh --root /S3 --self-signed"]

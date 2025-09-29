@@ -1,0 +1,32 @@
+FROM debian:bookworm-slim
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Base tools + Python + OpenSSH (server)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 python3-venv python3-pip \
+    ca-certificates openssl bash curl iputils-ping procps \
+    openssh-server \
+ && rm -rf /var/lib/apt/lists/*
+
+# Sanity: stick to Python 3.11 on bookworm
+RUN python3 --version | grep '^Python 3\.11\.'
+
+WORKDIR /app
+
+# Install Python deps into a virtualenv (code is bind-mounted at runtime)
+COPY requirements.txt /tmp/req.txt
+RUN python3 -m venv /opt/venv \
+ && /opt/venv/bin/python -m pip install --upgrade pip \
+ && /opt/venv/bin/pip install --no-cache-dir -r /tmp/req.txt
+
+# SSHD base setup (keys generated at runtime; see compose command below)
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh \
+ && mkdir -p /run/sshd \
+ && sed -ri 's@^#?PermitRootLogin\s+.*@PermitRootLogin prohibit-password@' /etc/ssh/sshd_config \
+ && sed -ri 's@^#?PasswordAuthentication\s+.*@PasswordAuthentication no@' /etc/ssh/sshd_config \
+ && sed -ri 's@^#?UsePAM\s+.*@UsePAM yes@' /etc/ssh/sshd_config
+
+# The code tree is bind-mounted by compose; keep entrypoint simple.
+EXPOSE 22
+ENTRYPOINT ["bash","-lc"]
+CMD ["echo", "attester image ready"]

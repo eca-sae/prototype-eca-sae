@@ -1,0 +1,8 @@
+TIMEOUT: "Verifier timed out waiting for Attester evidence"
+SIG_INVALID: "COSE signature invalid"
+IHB_MISMATCH: "IHB does not match recomputed value"
+BAD_EVIDENCE: "Evidence payload missing or malformed"
+FETCH_FAIL: "Failed to fetch required artifact"
+INTERNAL: "Unexpected internal error"
+VF_DECRYPT_FAIL: "Failed to decrypt VF"
+JP_MISMATCH: "Joint-possession proof mismatch"
