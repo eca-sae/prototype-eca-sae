@@ -53,6 +53,54 @@ The protocol's security properties have been analyzed using a **ProVerif model**
         ```
 -----
 
+## Demonstration
+
+For those who wish to see the protocol in action without running the prototype, the section below shows the log output from a complete, successful attestation ceremony. It demonstrates the three protocol phases, the asynchronous polling over the SAE transport, and the final validation gates being checked by the Verifier.
+
+```bash
+$ ./orchestrate.sh --show-ar
+[ORCH] Launching 1 parallel attestation(s) in 'randomized' mode...
+[RUN 1] STARTING (randomized): eca_uuid=29e9a005-3ba2-40bb-b845-21ddd4e0b082
+...
+attester-29e9a005  | [ATT] 0.00s - ATTESTER START
+attester-29e9a005  | [ATT] 0.00s - PHASE 1: Authenticated Channel Setup
+attester-29e9a005  | [ATT] 0.02s - PUBLISHED: /root/.wellknown/.../phase1_payload.cbor
+attester-29e9a005  | [ATT] 0.02s - PUBLISHED: /root/.wellknown/.../initial.status
+attester-29e9a005  | [ATT] 0.02s - PHASE 2: Waiting for Verifier Response
+attester-29e9a005  | [ATT] 0.02s - POLLING for: https://mock-s3-sae-endpoint/.../vf.status
+...
+verifier-29e9a005  | [VER] 0.07s - FOUND: https://attester-29e9a005:8443/.../initial.status
+verifier-29e9a005  | [VER] 0.15s - GATE 1: MAC verification
+verifier-29e9a005  | [VER] 0.15s - GATE 4: KEM public key match
+verifier-29e9a005  | [VER] 0.15s - PHASE 2: Generating Validator Factor
+verifier-29e9a005  | [VER] 0.15s - PUBLISHED: /S3/zerosign-bucket/.../vf.status
+...
+attester-29e9a005  | [ATT] 1.27s - FOUND: https://mock-s3-sae-endpoint/.../vf.status
+attester-29e9a005  | [ATT] 1.30s - PHASE 3: Final Evidence and Proof-of-Possession
+attester-29e9a005  | [ATT] 1.30s - PUBLISHED: /root/.wellknown/.../evidence.status
+attester-29e9a005  | [ATT] 1.30s - ATTESTER FINISHED.
+...
+verifier-29e9a005  | [VER] 1.25s - FOUND: https://attester-29e9a005:8443/.../evidence.status
+verifier-29e9a005  | [VER] 1.29s - GATE 5: Evidence time window validation
+verifier-29e9a005  | [VER] 1.29s - GATE 8: Nonce verification
+verifier-29e9a005  | [VER] 1.29s - GATE 10: PoP (Proof of Possession) validation
+verifier-29e9a005  | [VER] 1.29s - All gates passed. VERDICT: SUCCESS.
+...
+[ORCH] Decoding Attestation Results (--show-ar)…
+--- DECODED ATTESTATION RESULT ---
+{
+  "-262148": "urn:ietf:params:rats:status:success",
+  "1": "verifier-instance-001",
+  "2": "38fb49847fd5004796ef95a94cc2b06e749923ada1325d648c90759cfcd03ff1",
+  "6": 1759173340,
+  "7": "29e9a005-3ba2-40bb-b845-21ddd4e0b082"
+}
+----------------------------------
+```
+
+For the complete, verbose log of this run, see [**`examples/example-run.md`**](https://github.com/eca-sae/prototype-eca-sae/blob/main/examples/example-run.md).
+
+
 ## How It Works
 
 The prototype implementation is contained within `cli.py`, which orchestrates the three protocol phases. All cryptographic keys are derived deterministically from ceremony inputs using domain-separated HKDF-SHA-256.
