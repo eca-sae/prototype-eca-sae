@@ -2,9 +2,9 @@
 
 This repository contains a prototype implementation of the **Ephemeral Compute Attestation (ECA)** protocol and its recommended transport, the **Static Artifact Exchange (SAE)**.
 
-  * **ECA Protocol Draft:** [draft-ritz-eca-00](https://datatracker.ietf.org/doc/draft-ritz-eca-00/)
-  * **ECA Implemention Guide:** [draft-ritz-eca-impl-00](https://datatracker.ietf.org/doc/draft-ritz-eca-00/)
-  * **SAE Transport Draft:** [draft-ritz-sae-00](https://datatracker.ietf.org/doc/draft-ritz-sae-00)
+  * **ECA Protocol Draft:** [draft-ritz-eca](https://datatracker.ietf.org/doc/draft-ritz-eca/)
+  * **ECA Implemention Guide:** [draft-ritz-eca-impl](https://datatracker.ietf.org/doc/draft-ritz-eca/)
+  * **SAE Transport Draft:** [draft-ritz-sae](https://datatracker.ietf.org/doc/draft-ritz-sae)
   * **Formal Model:** [formal-model](https://github.com/eca-sae/internet-drafts-eca-sae/tree/pv0.3.0/formal-model)
 
 **Note:** This is an experimental prototype intended to demonstrate the protocol flow and facilitate interoperability testing. It is a work-in-progress and is not suitable for production use.
