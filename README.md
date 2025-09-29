@@ -93,12 +93,12 @@ The `orchestrate.sh` script sets up a local environment simulating two repositor
 
 This prototype implements several security features specified in the drafts:
 
-| Feature | Implementation Detail | Reference |
-| :--- | :--- | :--- |
-| **Replay Protection** | The Verifier maintains a persistent record of consumed `eca_uuid` values to enforce the "accept-once" rule. | `draft-ritz-eca-core.md` (Sec 3.1) |
-| **Authentication** | All artifacts are authenticated using either HMAC-SHA-256 or Ed25519 signatures. | `draft-ritz-eca-core.md` (Sec 3.1) |
-| **Freshness** | A Verifier-generated nonce is included in the final EAT to prevent replay within the ceremony. | `draft-ritz-eca-core.md` (Sec 4.1, Gate 8) |
-| **Side-Channel Resistance** | Artifacts are padded to a fixed size to mitigate timing attacks. | `draft-ritz-sae.md` (Sec 5.1) |
+| Feature | Implementation Detail |
+| :--- | :--- |
+| **Replay Protection** | The Verifier maintains a persistent record of consumed `eca_uuid` values to enforce the "accept-once" rule. |
+| **Authentication** | All artifacts are authenticated using either HMAC-SHA-256 or Ed25519 signatures. |
+| **Freshness** | A Verifier-generated nonce is included in the final EAT to prevent replay within the ceremony. |
+| **Side-Channel Resistance** | Artifacts are padded to a fixed size to mitigate timing attacks. |
 
 -----
 
